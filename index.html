@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DEMO Sınıfı – Ödev Takip</title>
+<title>10/C – Ödev Takip</title>
 
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--text:#000;}
@@ -112,12 +112,6 @@ onSnapshot(collection(db, "odevler"), snap=>{
     });
 });
 
-// Karanlık mod
-function toggleMode(){ document.body.classList.toggle("dark"); }
-</script>
-</head>
-<body>
-<button class="toggle" onclick="toggleMode()">🌙</button>
 
 <header>
 <h1>📚 DEMO Sınıfı – Ödev Takip</h1>
@@ -130,12 +124,11 @@ function toggleMode(){ document.body.classList.toggle("dark"); }
 <div id="guncel"></div>
 <p style="font-style:italic;color:gray;">Site şu anda geliştirme aşamasında. En yakın sürede ödevler eklenecektir.</p>
 
-<h2>⏰ Süresi Geçmiş Ödevler</h2>
-<div id="gecmis"></div>
+
 
 <hr>
 
-<h2>🧑‍🎓 Ödev Bildir</h2>
+<h2>🧑‍🎓  EKSİK ÖDEVİ BİLDİR</h2>
 <div class="card">
 <input id="ders" placeholder="Ders adı">
 <input id="tarih" type="date">
@@ -144,7 +137,7 @@ function toggleMode(){ document.body.classList.toggle("dark"); }
 <p id="mesaj"></p>
 </div>
 
-<h2>🔐 Yönetici</h2>
+<h2>🔐 Yönetici GİRİŞ</h2>
 <div class="card">
 <input id="sifre" type="password" placeholder="Şifre">
 <button id="adminBtn">Giriş</button>
