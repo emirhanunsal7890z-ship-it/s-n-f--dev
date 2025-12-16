@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEMO Sınıfı – Ödev Takip</title>
+
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--text:#000;}
+.dark{--bg:#121212;--card:#1e1e1e;--text:#fff;}
+body{margin:0;font-family:Arial;background:var(--bg);color:var(--text);}
+header{background:#4a6cf7;color:#fff;padding:20px;text-align:center;}
+.container{max-width:900px;margin:auto;padding:12px;}
+h2{border-left:6px solid #4a6cf7;padding-left:10px;}
+.card{background:var(--card);padding:15px;margin:10px 0;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);}
+input,textarea,button{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #ccc;font-size:16px;}
+button{background:#4a6cf7;color:white;border:none;cursor:pointer;}
+button:active{opacity:.8}
+.toggle{position:fixed;top:15px;right:15px;padding:8px 12px;border-radius:20px;}
+.hidden{display:none;}
+@media(max-width:600px){header h1{font-size:22px}}
+</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDBq4UtwuZu7-deFWxnNTsyS_j4HczNIrE",
+  authDomain: "site-fa74f.firebaseapp.com",
+  projectId: "site-fa74f",
+  storageBucket: "site-fa74f.appspot.com",
+  messagingSenderId: "835631171424",
+  appId: "1:835631171424:web:08a16d3cbb583399ad0005",
+  measurementId: "G-KLTLZ5DBR4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const ADMIN="1234";
+
+// Elementler
+const guncelDiv = document.getElementById("guncel");
+const gecmisDiv = document.getElementById("gecmis");
+const bekleyenDiv = document.getElementById("bekleyen");
+const ders = document.getElementById("ders");
+const tarih = document.getElementById("tarih");
+const aciklama = document.getElementById("aciklama");
+const mesaj = document.getElementById("mesaj");
+const adminDiv = document.getElementById("admin");
+const adminBtn = document.getElementById("adminBtn");
+const gonderBtn = document.getElementById("gonderBtn");
+
+// Öğrenci ödev bildirimi
+gonderBtn.addEventListener("click", async ()=>{
+    if(!ders.value || !tarih.value || !aciklama.value) return;
+    await addDoc(collection(db, "bekleyen"), {
+        ders: ders.value,
+        tarih: tarih.value,
+        aciklama: aciklama.value
+    });
+    ders.value=tarih.value=aciklama.value="";
+    mesaj.innerText="✅ Ödev onay sürecine alındı";
+});
+
+// Admin girişi
+adminBtn.addEventListener("click", ()=>{
+    const sifre = document.getElementById("sifre").value;
+    if(sifre===ADMIN){
+        adminDiv.classList.remove("hidden");
+        adminPanel();
+    } else alert("❌ Şifre yanlış!");
+});
+
+// Admin paneli ve onaylama
+function adminPanel(){
+    onSnapshot(collection(db, "bekleyen"), snap=>{
+        bekleyenDiv.innerHTML="";
+        snap.forEach(docSnap=>{
+            const o = docSnap.data();
+            const div = document.createElement("div");
+            div.className="card";
+            div.innerHTML=`
+                <strong>${o.ders}</strong>
+                <p>${o.aciklama}</p>
+                <small>${o.tarih}</small>
+                <button>Onayla</button>`;
+            const btn = div.querySelector("button");
+            btn.addEventListener("click", async ()=>{
+                await addDoc(collection(db, "odevler"), o);
+                await deleteDoc(doc(db,"bekleyen",docSnap.id));
+            });
+            bekleyenDiv.appendChild(div);
+        });
+    });
+}
+
+// Güncel ve geçmis ödevler
+onSnapshot(collection(db, "odevler"), snap=>{
+    guncelDiv.innerHTML="";
+    gecmisDiv.innerHTML="";
+    const today = new Date().toISOString().split("T")[0];
+    snap.forEach(docSnap=>{
+        const o = docSnap.data();
+        const div = document.createElement("div");
+        div.className="card";
+        div.innerHTML=`<strong>${o.ders}</strong><p>${o.aciklama}</p><small>${o.tarih}</small>`;
+        if(o.tarih<today) gecmisDiv.appendChild(div);
+        else guncelDiv.appendChild(div);
+    });
+});
+
+// Karanlık mod
+function toggleMode(){ document.body.classList.toggle("dark"); }
+</script>
+</head>
+<body>
+<button class="toggle" onclick="toggleMode()">🌙</button>
+
+<header>
+<h1>📚 DEMO Sınıfı – Ödev Takip</h1>
+<p>Ödev neydi muhabbeti bitti 😎</p>
+</header>
+
+<div class="container">
+
+<h2>✅ Güncel Ödevler</h2>
+<div id="guncel"></div>
+<p style="font-style:italic;color:gray;">Site şu anda geliştirme aşamasında. En yakın sürede ödevler eklenecektir.</p>
+
+<h2>⏰ Süresi Geçmiş Ödevler</h2>
+<div id="gecmis"></div>
+
+<hr>
+
+<h2>🧑‍🎓 Ödev Bildir</h2>
+<div class="card">
+<input id="ders" placeholder="Ders adı">
+<input id="tarih" type="date">
+<textarea id="aciklama" placeholder="Ödev açıklaması"></textarea>
+<button id="gonderBtn">Tamam</button>
+<p id="mesaj"></p>
+</div>
+
+<h2>🔐 Yönetici</h2>
+<div class="card">
+<input id="sifre" type="password" placeholder="Şifre">
+<button id="adminBtn">Giriş</button>
+</div>
+
+<div id="admin" class="hidden">
+<h2>📥 Onay Bekleyenler</h2>
+<div id="bekleyen"></div>
+</div>
+
+</div>
+</body>
+</html>
