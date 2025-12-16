@@ -6,19 +6,85 @@
 <title>10/C – Ödev Takip</title>
 
 <style>
-:root{--bg:#f4f6f8;--card:#fff;--text:#000;}
-.dark{--bg:#121212;--card:#1e1e1e;--text:#fff;}
-body{margin:0;font-family:Arial;background:var(--bg);color:var(--text);}
-header{background:#4a6cf7;color:#fff;padding:20px;text-align:center;}
-.container{max-width:900px;margin:auto;padding:12px;}
-h2{border-left:6px solid #4a6cf7;padding-left:10px;}
-.card{background:var(--card);padding:15px;margin:10px 0;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);}
-input,textarea,button{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #ccc;font-size:16px;}
-button{background:#4a6cf7;color:white;border:none;cursor:pointer;}
-button:active{opacity:.8}
-.toggle{position:fixed;top:15px;right:15px;padding:8px 12px;border-radius:20px;}
+:root{
+  --bg:#f4f6f8;
+  --card:#fff;
+  --text:#000;
+  --btn:#4a6cf7;
+  --btn-hover:#6b82f7;
+}
+.dark{
+  --bg:#121212;
+  --card:#1e1e1e;
+  --text:#fff;
+  --btn:#6b82f7;
+  --btn-hover:#4a6cf7;
+}
+body{
+  margin:0;
+  font-family:Arial;
+  background:var(--bg);
+  color:var(--text);
+  transition: background 0.3s, color 0.3s;
+}
+header{
+  background:var(--btn);
+  color:#fff;
+  padding:20px;
+  text-align:center;
+}
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:12px;
+}
+h2{
+  border-left:6px solid var(--btn);
+  padding-left:10px;
+}
+.card{
+  background:var(--card);
+  padding:15px;
+  margin:10px 0;
+  border-radius:10px;
+  box-shadow:0 4px 8px rgba(0,0,0,.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover{
+  transform: translateY(-4px);
+  box-shadow:0 8px 16px rgba(0,0,0,.2);
+}
+input,textarea,button{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:16px;
+}
+button{
+  background:var(--btn);
+  color:white;
+  border:none;
+  cursor:pointer;
+  transition: background 0.2s;
+}
+button:hover{background:var(--btn-hover);}
+.toggle{
+  position:fixed;top:15px;right:15px;
+  padding:8px 12px;border-radius:20px;
+  z-index:10;
+}
 .hidden{display:none;}
-@media(max-width:600px){header h1{font-size:22px}}
+footer{
+  text-align:center;
+  margin:20px 0;
+  font-size:14px;
+  color:gray;
+}
+@media(max-width:600px){
+  header h1{font-size:22px;}
+}
 </style>
 
 <script type="module">
@@ -112,9 +178,15 @@ onSnapshot(collection(db, "odevler"), snap=>{
     });
 });
 
+// Karanlık mod
+function toggleMode(){ document.body.classList.toggle("dark"); }
+</script>
+</head>
+<body>
+<button class="toggle" onclick="toggleMode()">🌙</button>
 
 <header>
-<h1>📚 DEMO Sınıfı – Ödev Takip</h1>
+<h1>📚 10/C – Ödev Takip</h1>
 <p>Ödev neydi muhabbeti bitti 😎</p>
 </header>
 
@@ -124,11 +196,12 @@ onSnapshot(collection(db, "odevler"), snap=>{
 <div id="guncel"></div>
 <p style="font-style:italic;color:gray;">Site şu anda geliştirme aşamasında. En yakın sürede ödevler eklenecektir.</p>
 
-
+<h2>⏰ Süresi Geçmiş Ödevler</h2>
+<div id="gecmis"></div>
 
 <hr>
 
-<h2>🧑‍🎓  EKSİK ÖDEVİ BİLDİR</h2>
+<h2>🧑‍🎓 Ödev Bildir</h2>
 <div class="card">
 <input id="ders" placeholder="Ders adı">
 <input id="tarih" type="date">
@@ -137,7 +210,7 @@ onSnapshot(collection(db, "odevler"), snap=>{
 <p id="mesaj"></p>
 </div>
 
-<h2>🔐 Yönetici GİRİŞ</h2>
+<h2>🔐 Yönetici</h2>
 <div class="card">
 <input id="sifre" type="password" placeholder="Şifre">
 <button id="adminBtn">Giriş</button>
@@ -148,6 +221,9 @@ onSnapshot(collection(db, "odevler"), snap=>{
 <div id="bekleyen"></div>
 </div>
 
+<footer>
+Made by Emirhan
+</footer>
 </div>
 </body>
 </html>
